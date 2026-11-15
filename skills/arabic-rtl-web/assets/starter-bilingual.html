@@ -1,0 +1,312 @@
+<!doctype html>
+<!--
+  Bayan starter: single-file bilingual page (Arabic first, English second).
+  Mechanics to keep: the head script, the [data-lang] hiding rule, :lang() type rules,
+  logical properties, the --dir variable, <bdi dir="ltr"> around LTR runs.
+  Everything else (content, colours, fonts, layout) is yours to replace.
+  Check your result:  python scripts/bidi_lint.py page.html && python scripts/i18n_parity.py page.html
+-->
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title data-ar-text="مَسار | تنقّل أذكى للمدن" data-en-text="Masar | Smarter movement for cities">مَسار | تنقّل أذكى للمدن</title>
+<meta name="description" data-ar-content="منصة تخطيط التنقّل الحضري للبلديات وشركات النقل." data-en-content="Urban mobility planning for municipalities and transit operators." content="منصة تخطيط التنقّل الحضري للبلديات وشركات النقل.">
+<script>
+/* Language and direction are set before first paint. */
+(function () {
+  var DIRS = { ar: "rtl", en: "ltr" }, root = document.documentElement, KEY = "site-lang";
+  function stored() { try { return localStorage.getItem(KEY); } catch (e) { return null; } }
+  function apply(lang) {
+    if (!DIRS[lang]) lang = "ar";
+    root.lang = lang;
+    root.dir = DIRS[lang];
+    var prefix = "data-" + lang + "-";
+    document.querySelectorAll("*").forEach(function (el) {
+      Array.prototype.slice.call(el.attributes).forEach(function (a) {
+        if (a.name.indexOf(prefix) !== 0) return;
+        var name = a.name.slice(prefix.length);
+        if (name === "text") el.textContent = a.value; else el.setAttribute(name, a.value);
+      });
+    });
+    try { localStorage.setItem(KEY, lang); } catch (e) {}
+  }
+  var wanted = new URLSearchParams(location.search).get("lang") || stored() || root.lang;
+  root.lang = DIRS[wanted] ? wanted : "ar";
+  root.dir = DIRS[root.lang];
+  document.addEventListener("DOMContentLoaded", function () {
+    apply(root.lang);
+    document.querySelectorAll("[data-lang-switch]").forEach(function (b) {
+      b.addEventListener("click", function () { apply(root.lang === "ar" ? "en" : "ar"); });
+    });
+    var io = "IntersectionObserver" in window && new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) { if (e.isIntersecting) { e.target.classList.add("in"); io.unobserve(e.target); } });
+    }, { threshold: 0.15 });
+    document.querySelectorAll(".reveal").forEach(function (el) { io ? io.observe(el) : el.classList.add("in"); });
+  });
+})();
+</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Alexandria:wght@500;700&family=IBM+Plex+Sans+Arabic:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+/* ---------- tokens ---------- */
+:root {
+  --ink: #12211f; --ink-soft: #46605b; --paper: #f6f3ec; --card: #fffdf8;
+  --brand: #0e6b5c; --brand-deep: #0a4a40; --accent: #e2a03f; --line: #ddd6c6;
+  --font-ar: "IBM Plex Sans Arabic", "Noto Sans Arabic", "Segoe UI", Tahoma, sans-serif;
+  --font-en: "IBM Plex Sans", "Segoe UI", system-ui, sans-serif;
+  --display-ar: "Alexandria", "IBM Plex Sans Arabic", "Segoe UI", Tahoma, sans-serif;
+  --display-en: "Alexandria", "IBM Plex Sans", system-ui, sans-serif;
+  --radius: 18px; --wrap: 72rem; --gutter: clamp(1.25rem, 4vw, 3rem);
+  --dir: 1;
+}
+[dir="rtl"] { --dir: -1; }
+
+/* ---------- language mechanics ---------- */
+html[lang="ar"] [data-lang]:not([data-lang="ar"]),
+html[lang="en"] [data-lang]:not([data-lang="en"]) { display: none !important; }
+
+/* ---------- type: Arabic and Latin get their own settings ---------- */
+*, *::before, *::after { box-sizing: border-box; }
+html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
+body { margin: 0; background: var(--paper); color: var(--ink); font-size: 1.0625rem; }
+/* :lang() only switches variables. Fonts are applied at language boundaries ([lang]) and on headings,
+   so a span inside a heading inherits the heading's font and leading instead of being reset. */
+:lang(ar) { --text: var(--font-ar); --display: var(--display-ar); --lh: 1.85; --lh-head: 1.4; letter-spacing: 0; font-style: normal; }
+:lang(en) { --text: var(--font-en); --display: var(--display-en); --lh: 1.65; --lh-head: 1.15; }
+[lang] { font-family: var(--text); line-height: var(--lh); }
+h1, h2, h3 { margin: 0; font-weight: 700; text-wrap: balance; font-family: var(--display); line-height: var(--lh-head); }
+:is(h1, h2, h3):lang(en) { letter-spacing: -0.01em; }
+h1 { font-size: clamp(2.2rem, 5.2vw, 4rem); }
+h2 { font-size: clamp(1.6rem, 3vw, 2.4rem); }
+h3 { font-size: 1.2rem; }
+p { margin: 0; text-wrap: pretty; }
+a { color: inherit; }
+.eyebrow { display: inline-flex; align-items: center; gap: .6rem; color: var(--brand); font-weight: 600; font-size: .95rem; }
+.eyebrow::before { content: ""; inline-size: 1.75rem; block-size: 2px; background: var(--accent); }
+.eyebrow:lang(en) { letter-spacing: .12em; text-transform: uppercase; font-size: .78rem; }
+
+/* ---------- layout: logical properties only ---------- */
+.wrap { max-inline-size: var(--wrap); margin-inline: auto; padding-inline: var(--gutter); }
+section { padding-block: clamp(3.5rem, 8vw, 6.5rem); }
+.header { position: sticky; inset-block-start: 0; z-index: 10; background: color-mix(in srgb, var(--paper) 88%, transparent); backdrop-filter: blur(10px); border-block-end: 1px solid var(--line); }
+.header .wrap { display: flex; align-items: center; gap: 2rem; min-block-size: 4.25rem; }
+.logo { font-family: var(--display-ar); font-weight: 700; font-size: 1.35rem; text-decoration: none; display: flex; align-items: center; gap: .55rem; }
+.logo svg { inline-size: 1.7rem; block-size: 1.7rem; }
+.nav { display: flex; gap: 1.75rem; margin-inline-start: auto; }
+.nav a { text-decoration: none; color: var(--ink-soft); font-weight: 500; }
+.nav a:hover { color: var(--ink); }
+.lang-switch { border: 1px solid var(--line); background: var(--card); color: var(--ink); border-radius: 999px; padding: .4rem 1rem; font: inherit; font-size: .9rem; font-weight: 500; cursor: pointer; }
+.lang-switch:hover { border-color: var(--brand); }
+
+.hero .wrap { display: grid; grid-template-columns: 1.1fr .9fr; gap: clamp(2rem, 5vw, 4.5rem); align-items: center; }
+.hero p.lead { margin-block: 1.4rem 2.2rem; font-size: 1.2rem; color: var(--ink-soft); max-inline-size: 34rem; }
+.actions { display: flex; flex-wrap: wrap; gap: .9rem; }
+.btn { display: inline-flex; align-items: center; justify-content: center; gap: .6rem; padding: .85rem 1.5rem; border-radius: 999px; font: inherit; font-weight: 600; text-decoration: none; border: 1.5px solid transparent; cursor: pointer; }
+.btn-primary { background: var(--brand); color: #fff; }
+.btn-primary:hover { background: var(--brand-deep); }
+.btn-ghost { border-color: var(--line); background: transparent; color: var(--ink); }
+/* Directional icons mirror; object icons do not. */
+.icon-directional { inline-size: 1.1em; block-size: 1.1em; transform: scaleX(var(--dir)); transition: translate .25s; }
+.btn:hover .icon-directional { translate: calc(var(--dir) * 4px) 0; }
+
+.hero-art { position: relative; aspect-ratio: 1 / 1; border-radius: calc(var(--radius) * 1.6); background: var(--brand-deep); overflow: hidden; }
+.hero-art svg { position: absolute; inset: 0; inline-size: 100%; block-size: 100%; }
+.badge { position: absolute; inset-block-end: 1.25rem; inset-inline-start: 1.25rem; background: var(--card); border-radius: 14px; padding: .8rem 1.1rem; box-shadow: 0 10px 30px rgb(0 0 0 / .18); }
+.badge strong { display: block; font-size: 1.5rem; line-height: 1.2; color: var(--brand); }
+.badge span { font-size: .85rem; color: var(--ink-soft); }
+
+.grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.25rem; margin-block-start: 2.5rem; }
+.card { background: var(--card); border: 1px solid var(--line); border-radius: var(--radius); padding: 1.75rem; border-inline-start: 4px solid var(--accent); }
+.card h3 { margin-block: 1rem .5rem; }
+.card p { color: var(--ink-soft); }
+.card svg { inline-size: 2rem; block-size: 2rem; color: var(--brand); }
+
+.stats { background: var(--brand-deep); color: #f3efe4; }
+.stats .wrap { display: grid; grid-template-columns: repeat(4, 1fr); gap: 2rem; }
+.stat strong { display: block; font-family: var(--display-en); font-size: clamp(2rem, 4vw, 3.2rem); line-height: 1.1; color: var(--accent); }
+.stat span { opacity: .85; }
+
+.steps { counter-reset: step; display: grid; grid-template-columns: repeat(3, 1fr); gap: 2rem; margin-block-start: 2.5rem; padding: 0; list-style: none; }
+.steps li { position: relative; padding-block-start: 3.25rem; }
+.steps li::before { counter-increment: step; content: counter(step); position: absolute; inset-block-start: 0; inset-inline-start: 0; inline-size: 2.4rem; block-size: 2.4rem; display: grid; place-items: center; border-radius: 50%; background: var(--brand); color: #fff; font-weight: 600; font-family: var(--font-en); }
+/* connector runs towards the next step: inline-end in both directions */
+.steps li:not(:last-child)::after { content: ""; position: absolute; inset-block-start: 1.2rem; inset-inline: 3rem -1.4rem; block-size: 2px; background: var(--line); }
+
+.contact .wrap { display: grid; grid-template-columns: 1fr 1fr; gap: clamp(2rem, 5vw, 4rem); }
+.contact dl { margin-block: 1.5rem 0; display: grid; gap: .9rem; }
+.contact dt { font-size: .85rem; color: var(--ink-soft); }
+.contact dd { margin: 0; font-weight: 500; }
+form { display: grid; gap: 1rem; background: var(--card); border: 1px solid var(--line); border-radius: var(--radius); padding: 1.75rem; }
+label { display: grid; gap: .35rem; font-weight: 500; font-size: .95rem; }
+input, textarea { font: inherit; padding: .7rem .9rem; border: 1px solid var(--line); border-radius: 10px; background: #fff; color: var(--ink); inline-size: 100%; }
+input:focus, textarea:focus, .btn:focus-visible, .lang-switch:focus-visible { outline: 2px solid var(--brand); outline-offset: 2px; }
+
+.footer { border-block-start: 1px solid var(--line); padding-block: 2rem; color: var(--ink-soft); font-size: .9rem; }
+.footer .wrap { display: flex; flex-wrap: wrap; gap: 1rem; justify-content: space-between; }
+
+/* ---------- motion: horizontal movement follows reading direction ---------- */
+.reveal { opacity: 0; transform: translateX(calc(var(--dir) * 28px)); transition: opacity .7s, transform .7s cubic-bezier(.2, .7, .2, 1); }
+.reveal.in { opacity: 1; transform: none; }
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  .reveal { opacity: 1; transform: none; transition: none; }
+  .icon-directional { transition: none; }
+}
+
+@media (max-width: 860px) {
+  .nav { display: none; }
+  .lang-switch { margin-inline-start: auto; }
+  .hero .wrap, .contact .wrap, .grid-3, .steps { grid-template-columns: 1fr; }
+  .stats .wrap { grid-template-columns: 1fr 1fr; }
+  .steps li:not(:last-child)::after { display: none; }
+}
+</style>
+</head>
+<body>
+
+<header class="header">
+  <div class="wrap">
+    <a class="logo" href="#top" data-ar-aria-label="مَسار، الصفحة الرئيسية" data-en-aria-label="Masar, home">
+      <svg viewBox="0 0 32 32" fill="none" aria-hidden="true"><circle cx="16" cy="16" r="15" fill="#0e6b5c"/><path d="M8 20c4-10 12-10 16 0" stroke="#e2a03f" stroke-width="2.5" stroke-linecap="round"/><circle cx="16" cy="12.5" r="2.5" fill="#f6f3ec"/></svg>
+      <span data-lang="ar">مَسار</span><span data-lang="en">Masar</span>
+    </a>
+    <nav class="nav" data-ar-aria-label="التنقّل الرئيسي" data-en-aria-label="Main navigation">
+      <a href="#features"><span data-lang="ar">المزايا</span><span data-lang="en">Features</span></a>
+      <a href="#how"><span data-lang="ar">طريقة العمل</span><span data-lang="en">How it works</span></a>
+      <a href="#contact"><span data-lang="ar">تواصل معنا</span><span data-lang="en">Contact</span></a>
+    </nav>
+    <!-- The switcher names the language it switches TO, in that language. -->
+    <button class="lang-switch" type="button" data-lang-switch>
+      <span data-lang="ar" lang="en">English</span><span data-lang="en" lang="ar">العربية</span>
+    </button>
+  </div>
+</header>
+
+<main id="top">
+  <section class="hero">
+    <div class="wrap">
+      <div class="reveal">
+        <span class="eyebrow"><span data-lang="ar">تخطيط التنقّل الحضري</span><span data-lang="en">Urban mobility planning</span></span>
+        <h1><span data-lang="ar">مدينة تتحرّك بسلاسة تبدأ بقرار مبنيّ على البيانات</span><span data-lang="en">A city that moves well starts with a decision built on data</span></h1>
+        <p class="lead" data-lang="ar">يجمع «مَسار» بيانات الحافلات والطرق والمشاة في لوحة واحدة، فيرى فريقك أين يتعطّل التنقّل ولماذا، ويختبر الحلول قبل تنفيذها.</p>
+        <p class="lead" data-lang="en">Masar brings bus, road and pedestrian data into one view, so your team sees where movement breaks down and why, and tests fixes before building them.</p>
+        <div class="actions">
+          <a class="btn btn-primary" href="#contact">
+            <span data-lang="ar">اطلب عرضًا تجريبيًا</span><span data-lang="en">Request a demo</span>
+            <svg class="icon-directional" viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M4 10h12m-5-5 5 5-5 5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </a>
+          <a class="btn btn-ghost" href="#how"><span data-lang="ar">كيف يعمل؟</span><span data-lang="en">How it works</span></a>
+        </div>
+      </div>
+      <div class="hero-art reveal" role="img" data-ar-aria-label="خريطة تجريدية لمسارات النقل في المدينة" data-en-aria-label="Abstract map of the city's transit routes">
+        <svg viewBox="0 0 400 400" fill="none" aria-hidden="true">
+          <g stroke="#1c8271" stroke-width="1"><path d="M0 80h400M0 160h400M0 240h400M0 320h400M80 0v400M160 0v400M240 0v400M320 0v400"/></g>
+          <path d="M-10 300C90 300 110 120 200 120s120 150 220 110" stroke="#e2a03f" stroke-width="6" stroke-linecap="round"/>
+          <path d="M40 -10c0 140 120 150 160 230s60 120 60 190" stroke="#f6f3ec" stroke-width="4" stroke-linecap="round" stroke-dasharray="2 14"/>
+          <g fill="#f6f3ec"><circle cx="200" cy="120" r="9"/><circle cx="112" cy="232" r="7"/><circle cx="318" cy="246" r="7"/></g>
+        </svg>
+        <div class="badge"><strong><bdi dir="ltr">−18%</bdi></strong><span data-lang="ar">زمن الانتظار في المحطات</span><span data-lang="en">waiting time at stops</span></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="features">
+    <div class="wrap">
+      <span class="eyebrow"><span data-lang="ar">المزايا</span><span data-lang="en">Features</span></span>
+      <h2><span data-lang="ar">ثلاث أدوات، صورة واحدة</span><span data-lang="en">Three tools, one picture</span></h2>
+      <div class="grid-3">
+        <article class="card reveal">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
+          <h3><span data-lang="ar">رصد لحظي</span><span data-lang="en">Live monitoring</span></h3>
+          <p data-lang="ar">تابع حركة الأسطول والازدحام دقيقة بدقيقة، وتلقَّ تنبيهًا عند أول خلل.</p>
+          <p data-lang="en">Follow fleet movement and congestion minute by minute, and get alerted at the first sign of trouble.</p>
+        </article>
+        <article class="card reveal">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M4 19V5m0 14h16M8 15l3-4 3 2 4-6"/></svg>
+          <h3><span data-lang="ar">محاكاة قبل التنفيذ</span><span data-lang="en">Simulate before you build</span></h3>
+          <p data-lang="ar">جرّب مسارًا جديدًا أو جدولًا مختلفًا، وشاهد أثره على زمن الرحلة قبل إنفاق أي ريال.</p>
+          <p data-lang="en">Try a new route or a different timetable and see its effect on journey time before spending anything.</p>
+        </article>
+        <article class="card reveal">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M5 4h14v16H5zM9 9h6M9 13h6M9 17h3"/></svg>
+          <h3><span data-lang="ar">تقارير جاهزة للقرار</span><span data-lang="en">Decision-ready reports</span></h3>
+          <p data-lang="ar">تقارير شهرية بالعربية والإنجليزية تلخّص ما تغيّر وما ينبغي فعله تاليًا.</p>
+          <p data-lang="en">Monthly reports in Arabic and English that summarise what changed and what to do next.</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section class="stats" data-ar-aria-label="أرقام" data-en-aria-label="Key figures">
+    <div class="wrap">
+      <div class="stat"><strong>14</strong><span data-lang="ar">مدينة تستخدم المنصة</span><span data-lang="en">cities on the platform</span></div>
+      <div class="stat"><strong><span data-lang="ar">3.2 مليون</span><span data-lang="en">3.2M</span></strong><span data-lang="ar">رحلة تُحلَّل يوميًا</span><span data-lang="en">trips analysed daily</span></div>
+      <div class="stat"><strong>18%</strong><span data-lang="ar">انخفاض في زمن الانتظار</span><span data-lang="en">shorter waiting time</span></div>
+      <div class="stat"><strong>6</strong><span data-lang="ar">أسابيع حتى التشغيل</span><span data-lang="en">weeks to go live</span></div>
+    </div>
+  </section>
+
+  <section id="how">
+    <div class="wrap">
+      <span class="eyebrow"><span data-lang="ar">طريقة العمل</span><span data-lang="en">How it works</span></span>
+      <h2><span data-lang="ar">من البيانات الخام إلى قرار في ثلاث خطوات</span><span data-lang="en">From raw data to a decision in three steps</span></h2>
+      <ol class="steps">
+        <li class="reveal">
+          <h3><span data-lang="ar">الربط</span><span data-lang="en">Connect</span></h3>
+          <p data-lang="ar">نربط مصادر بياناتك الحالية دون تغيير أنظمتك.</p>
+          <p data-lang="en">We connect your existing data sources without changing your systems.</p>
+        </li>
+        <li class="reveal">
+          <h3><span data-lang="ar">التحليل</span><span data-lang="en">Analyse</span></h3>
+          <p data-lang="ar">تكشف المنصة نقاط الاختناق وأسبابها تلقائيًا.</p>
+          <p data-lang="en">The platform finds bottlenecks and their causes automatically.</p>
+        </li>
+        <li class="reveal">
+          <h3><span data-lang="ar">القرار</span><span data-lang="en">Decide</span></h3>
+          <p data-lang="ar">يقارن فريقك البدائل ويختار الأنسب بثقة.</p>
+          <p data-lang="en">Your team compares options and chooses with confidence.</p>
+        </li>
+      </ol>
+    </div>
+  </section>
+
+  <section id="contact" class="contact">
+    <div class="wrap">
+      <div>
+        <span class="eyebrow"><span data-lang="ar">تواصل معنا</span><span data-lang="en">Contact</span></span>
+        <h2><span data-lang="ar">لنتحدّث عن مدينتك</span><span data-lang="en">Let's talk about your city</span></h2>
+        <dl>
+          <!-- LTR runs inside Arabic text are isolated with <bdi dir="ltr">. -->
+          <div><dt><span data-lang="ar">الهاتف</span><span data-lang="en">Phone</span></dt><dd><bdi dir="ltr">+966 11 555 0142</bdi></dd></div>
+          <div><dt><span data-lang="ar">البريد الإلكتروني</span><span data-lang="en">Email</span></dt><dd><bdi dir="ltr">hello@masar.example</bdi></dd></div>
+          <div><dt><span data-lang="ar">ساعات العمل</span><span data-lang="en">Hours</span></dt>
+            <dd data-lang="ar">من الأحد إلى الخميس، من 8:00 ص إلى 4:00 م</dd>
+            <dd data-lang="en">Sunday to Thursday, 8:00 am to 4:00 pm</dd></div>
+        </dl>
+      </div>
+      <form action="#" method="post">
+        <label><span data-lang="ar">الاسم الكامل</span><span data-lang="en">Full name</span>
+          <input type="text" name="name" autocomplete="name" dir="auto" required></label>
+        <label><span data-lang="ar">البريد الإلكتروني</span><span data-lang="en">Email</span>
+          <input type="email" name="email" autocomplete="email" dir="ltr" placeholder="name@example.com" required></label>
+        <label><span data-lang="ar">رقم الجوال</span><span data-lang="en">Mobile number</span>
+          <input type="tel" name="phone" autocomplete="tel" dir="ltr" placeholder="+966 5X XXX XXXX"></label>
+        <label><span data-lang="ar">رسالتك</span><span data-lang="en">Your message</span>
+          <textarea name="message" rows="4" dir="auto" data-ar-placeholder="كيف يمكننا المساعدة؟" data-en-placeholder="How can we help?"></textarea></label>
+        <button class="btn btn-primary" type="submit"><span data-lang="ar">إرسال</span><span data-lang="en">Send</span></button>
+      </form>
+    </div>
+  </section>
+</main>
+
+<footer class="footer">
+  <div class="wrap">
+    <span data-lang="ar">© <bdi>2026</bdi> مَسار. جميع الحقوق محفوظة.</span><span data-lang="en">© 2026 Masar. All rights reserved.</span>
+    <span data-lang="ar">الرياض، المملكة العربية السعودية</span><span data-lang="en">Riyadh, Saudi Arabia</span>
+  </div>
+</footer>
+
+</body>
+</html>

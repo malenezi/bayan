@@ -1,0 +1,30 @@
+{
+  "auth": {
+    "signIn": "Sign in",
+    "forgot": "Forgot your password?",
+    "welcomeBack": "Welcome back, {name}",
+    "sessionExpired": "Your session has expired. Please sign in again."
+  },
+  "files": {
+    "upload": "Upload file",
+    "download": "Download",
+    "empty": "You have no files yet. Upload your first file to get started.",
+    "tooLarge": "File is too large! Maximum size is {max} MB.",
+    "deleteTitle": "Are you sure you want to delete this file?",
+    "deleteBody": "This action cannot be undone.",
+    "saved": "Changes saved successfully",
+    "count": "Files: {count}"
+  },
+  "activity": {
+    "commented": "{name} commented on your file",
+    "minutesAgo": "{n} minutes ago"
+  },
+  "common": {
+    "save": "Save",
+    "cancel": "Cancel",
+    "tryAgain": "Try again",
+    "learnMore": "Learn more",
+    "dashboard": "Dashboard",
+    "settings": "Settings"
+  }
+}

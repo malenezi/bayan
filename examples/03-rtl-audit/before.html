@@ -1,0 +1,52 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>نقطة | تتبّع الشحنات</title>
+<style>
+body { font-family: Inter, Helvetica, sans-serif; line-height: 1.3; direction: rtl; text-align: right; margin: 0; color: #1c1c28; }
+.header { display: flex; padding: 16px 32px; border-bottom: 1px solid #ddd; }
+.header .logo { font-weight: 700; margin-right: auto; }
+.header nav a { margin-left: 24px; color: inherit; text-decoration: none; }
+h1 { font-size: 40px; letter-spacing: 0.04em; }
+.tag { text-transform: uppercase; letter-spacing: 0.15em; font-size: 12px; color: #6a5cff; }
+.hero { padding: 64px 32px; }
+.hero em { font-style: italic; color: #6a5cff; }
+.card { border: 1px solid #ddd; border-left: 4px solid #6a5cff; border-radius: 8px; padding: 20px; padding-left: 28px; margin: 16px 32px; position: relative; }
+.card .status { position: absolute; top: 20px; right: 20px; font-size: 13px; }
+.card .id { word-break: break-all; color: #666; }
+.progress { height: 8px; background: #eee; border-radius: 4px; overflow: hidden; }
+.progress i { display: block; height: 100%; width: 60%; background: #6a5cff; float: left; }
+.next { float: left; }
+.drawer { position: fixed; top: 0; left: 0; width: 280px; transform: translateX(-100%); transition: transform .3s; }
+form { margin: 32px; }
+input { display: block; margin-bottom: 12px; padding: 10px; width: 320px; }
+</style>
+</head>
+<body>
+<div class="header">
+  <div class="logo">نقطة</div>
+  <nav><a href="#">الرئيسية</a><a href="#">الشحنات</a><a href="#">English</a></nav>
+</div>
+<div class="hero">
+  <span class="tag">تتبّع الشحنات</span>
+  <h1>اعرف اين شحنتك, <em>لحظة بلحظة</em></h1>
+  <p>هل تبحث عن شحنة? ادخل رقم التتبّع وسنخبرك بمكانها.</p>
+</div>
+<div class="card">
+  <span class="status">في الطريق</span>
+  <h3>شحنة رقم NQ-2026-00417</h3>
+  <p class="id">من الرياض إلى جدة · الوزن 12 - 15 كجم · الوصول خلال ٣ أيام</p>
+  <div class="progress"><i></i></div>
+  <p>للاستفسار اتصل على +966 11 555 0199 أو راسلنا على @nuqta_help</p>
+  <a class="next" href="#">التفاصيل →</a>
+</div>
+<form>
+  <input type="text" placeholder="الاسم">
+  <input type="email" placeholder="البريد الإلكتروني">
+  <input type="tel" placeholder="رقم الجوال">
+  <button class="ml-4 text-left">تتبّــــع</button>
+</form>
+<aside class="drawer">القائمة</aside>
+</body>
+</html>

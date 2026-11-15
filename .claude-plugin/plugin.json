@@ -1,0 +1,10 @@
+{
+  "name": "bayan",
+  "description": "Arabic-first skills: bilingual RTL/LTR websites, cinematic HTML decks, RTL audits and Arabic UX writing, with linters that verify the output.",
+  "version": "1.0.0",
+  "author": { "name": "Mamdouh Alenezi", "url": "https://github.com/malenezi" },
+  "homepage": "https://github.com/malenezi/bayan",
+  "repository": "https://github.com/malenezi/bayan",
+  "license": "MIT",
+  "keywords": ["arabic", "rtl", "bidi", "i18n", "localization", "slides", "ux-writing"]
+}

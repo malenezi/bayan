@@ -1,0 +1,332 @@
+<!doctype html>
+<!--
+  Bayan deck starter: a self-contained bilingual HTML presentation (Arabic first).
+  Keys: arrows / space / PageUp / PageDown / Home / End, L = language, F = full screen, N = notes, P or Ctrl+P = print to PDF.
+  In Arabic the LEFT arrow advances, because that is the reading direction.
+  Keep the engine (script, .deck/.slide rules, print and reduced-motion blocks); replace theme tokens, layouts and content.
+  Check:  python scripts/bidi_lint.py deck.html --profile deck && python scripts/i18n_parity.py deck.html
+-->
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title data-ar-text="برنامج إتقان | مراجعة الربع الثالث 2026" data-en-text="Itqan Programme | Q3 2026 Review">برنامج إتقان | مراجعة الربع الثالث 2026</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Kufi+Arabic:wght@500;700&family=IBM+Plex+Sans+Arabic:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* ---------- theme tokens ---------- */
+:root {
+  --bg: #f4f1ea; --ink: #101a33; --muted: #5b6480; --line: #d8d2c4; --card: #fffdf8;
+  --accent: #d9482b; --accent-soft: #f6d9d0; --good: #1f7a5a;
+  --font-ar: "IBM Plex Sans Arabic", "Noto Sans Arabic", "Segoe UI", Tahoma, sans-serif;
+  --font-en: "IBM Plex Sans", "Segoe UI", system-ui, sans-serif;
+  --display-ar: "Noto Kufi Arabic", "IBM Plex Sans Arabic", "Segoe UI", Tahoma, sans-serif;
+  --display-en: "IBM Plex Sans", "Segoe UI", system-ui, sans-serif;
+  --dir: 1; --scale: 1;
+}
+[dir="rtl"] { --dir: -1; }
+
+/* ---------- language mechanics ---------- */
+html[lang="ar"] [data-lang]:not([data-lang="ar"]),
+html[lang="en"] [data-lang]:not([data-lang="en"]) { display: none !important; }
+
+/* ---------- engine: a 1600x900 stage scaled to the window ---------- */
+*, *::before, *::after { box-sizing: border-box; }
+html, body { margin: 0; block-size: 100%; background: #0b1020; overflow: hidden; }
+.deck { position: fixed; inset: 0; }
+.slide {
+  /* Centred with physical offsets on purpose: the stage sits in the middle in both directions. */
+  position: absolute; top: 50%; left: 50%; margin: -450px 0 0 -800px;
+  inline-size: 1600px; block-size: 900px;
+  background: var(--bg); color: var(--ink); padding: 90px 110px 100px;
+  display: flex; flex-direction: column; justify-content: center; overflow: hidden;
+  --shift: 70px; opacity: 0; visibility: hidden;
+  transform: translateX(calc(var(--dir) * var(--shift))) scale(var(--scale));
+  transition: opacity .55s ease, transform .7s cubic-bezier(.2, .7, .2, 1), visibility 0s .55s;
+}
+.slide.is-past { --shift: -70px; }
+.slide.is-active { --shift: 0px; opacity: 1; visibility: visible; transition-delay: 0s; }
+[data-step] { opacity: 0; transform: translateY(18px); transition: opacity .5s, transform .5s; }
+[data-step].is-shown { opacity: 1; transform: none; }
+
+.progress { position: fixed; inset-block-end: 0; inset-inline: 0; block-size: 4px; background: rgb(255 255 255 / .12); z-index: 5; }
+.progress i { display: block; block-size: 100%; inline-size: 0; background: var(--accent); transition: inline-size .4s; }
+.counter { position: fixed; inset-block-end: 14px; inset-inline-end: 20px; z-index: 5; color: #9aa3bd; font: 500 13px var(--font-en); }
+.notes { display: none; }
+.notes-panel { position: fixed; inset-inline: 0; inset-block-end: 0; z-index: 6; background: rgb(11 16 32 / .94); color: #e9ecf5; padding: 18px 28px 26px; font-size: 18px; max-block-size: 34vh; overflow: auto; display: none; }
+.show-notes .notes-panel { display: block; }
+.sr-only { position: absolute; inline-size: 1px; block-size: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+
+/* ---------- type ---------- */
+body { font-size: 32px; }
+/* :lang() only switches variables; fonts are applied at language boundaries and on headings (see the web starter). */
+:lang(ar) { --text: var(--font-ar); --display: var(--display-ar); --lh: 1.75; --lh-head: 1.45; letter-spacing: 0; font-style: normal; }
+:lang(en) { --text: var(--font-en); --display: var(--display-en); --lh: 1.5; --lh-head: 1.12; }
+[lang] { font-family: var(--text); line-height: var(--lh); }
+h1, h2, h3, p, ul, ol { margin: 0; }
+h1, h2, h3 { font-family: var(--display); line-height: var(--lh-head); }
+h1, h2 { text-wrap: balance; font-weight: 700; }
+:is(h1, h2, h3):lang(en) { letter-spacing: -0.015em; }
+h1 { font-size: 84px; }
+h2 { font-size: 62px; max-inline-size: 22ch; }
+h2:lang(en) { max-inline-size: 26ch; }
+h3 { font-size: 38px; font-weight: 600; }
+.kicker { color: var(--accent); font-weight: 600; font-size: 28px; margin-block-end: 22px; display: flex; align-items: center; gap: 14px; }
+.kicker::before { content: ""; inline-size: 44px; block-size: 3px; background: currentColor; }
+.kicker:lang(en) { letter-spacing: .14em; text-transform: uppercase; font-size: 22px; }
+.muted { color: var(--muted); }
+.num { font-family: var(--font-en); font-weight: 700; font-variant-numeric: tabular-nums; }
+.source { position: absolute; inset-block-end: 40px; inset-inline-start: 110px; font-size: 20px; color: var(--muted); }
+
+/* ---------- layouts ---------- */
+.slide[data-layout="title"] { background: var(--ink); color: #f4f1ea; justify-content: flex-end; }
+.slide[data-layout="title"] h1 { max-inline-size: 15ch; }
+.slide[data-layout="title"] .meta { margin-block-start: 36px; display: flex; gap: 40px; color: #aab2cc; font-size: 28px; }
+.slide[data-layout="title"]::before { content: ""; position: absolute; inset-block-start: -220px; inset-inline-end: -160px; inline-size: 720px; block-size: 720px; border-radius: 50%; border: 90px solid var(--accent); opacity: .95; }
+
+.slide[data-layout="statement"] h2 { font-size: 86px; max-inline-size: 19ch; }
+.slide[data-layout="statement"] h2:lang(en) { max-inline-size: 22ch; }
+.slide[data-layout="statement"] mark { background: none; color: var(--accent); }
+
+.trio { display: grid; grid-template-columns: repeat(3, 1fr); gap: 36px; margin-block-start: 56px; }
+.trio > div { background: var(--card); border: 1px solid var(--line); border-radius: 22px; padding: 36px; border-block-start: 6px solid var(--accent); }
+.trio .num { display: block; font-size: 100px; line-height: 1.1; white-space: nowrap; }
+.trio p { font-size: 31px; color: var(--muted); margin-block-start: 10px; }
+.trio small { display: inline-block; margin-block-start: 16px; padding: 4px 14px; border-radius: 999px; background: #dcefe7; color: var(--good); font-size: 24px; font-weight: 600; }
+
+.bars { margin-block-start: 56px; display: grid; gap: 30px; }
+.bar { display: grid; grid-template-columns: 360px 1fr 120px; align-items: center; gap: 28px; font-size: 32px; }
+.bar .track { block-size: 44px; background: #e7e1d3; border-radius: 8px; overflow: hidden; }
+/* Bars grow with inline-size from the inline start; transform-origin is physical and would not mirror. */
+.bar .fill { display: block; block-size: 100%; inline-size: 0; background: var(--ink); border-radius: 8px; transition: inline-size 1s cubic-bezier(.2, .7, .2, 1) .25s; }
+.bar.hot .fill { background: var(--accent); }
+.is-active .bar .fill { inline-size: var(--v); }
+.bar .num { text-align: end; }
+
+.split { display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: center; }
+.points { list-style: none; padding: 0; display: grid; gap: 38px; }
+.points li { padding-inline-start: 30px; border-inline-start: 5px solid var(--accent); }
+.points li p { color: var(--muted); font-size: 30px; }
+
+.compare { display: grid; grid-template-columns: 1fr auto 1fr; gap: 36px; align-items: stretch; margin-block-start: 48px; }
+.compare > div { border-radius: 22px; padding: 48px; border: 1px solid var(--line); background: var(--card); }
+.compare > div.to { background: var(--ink); color: #f4f1ea; border-color: var(--ink); }
+.compare ul { margin-block-start: 18px; padding-inline-start: 1.1em; display: grid; gap: 16px; font-size: 32px; }
+.compare .arrow { align-self: center; inline-size: 64px; block-size: 64px; color: var(--accent); transform: scaleX(var(--dir)); }
+
+.timeline { list-style: none; padding: 0; margin-block-start: 64px; display: grid; grid-template-columns: repeat(4, 1fr); position: relative; }
+.timeline::before { content: ""; position: absolute; inset-block-start: 13px; inset-inline: 0; block-size: 3px; background: var(--line); }
+.timeline li { position: relative; padding-block-start: 60px; padding-inline-end: 32px; }
+.timeline li::before { content: ""; position: absolute; inset-block-start: 0; inset-inline-start: 0; inline-size: 28px; block-size: 28px; border-radius: 50%; background: var(--bg); border: 5px solid var(--accent); }
+.timeline time { display: block; color: var(--accent); font-weight: 600; font-size: 28px; }
+.timeline p { font-size: 28px; color: var(--muted); }
+
+.asks { counter-reset: ask; list-style: none; padding: 0; margin-block-start: 56px; display: grid; gap: 34px; }
+.asks li { counter-increment: ask; display: grid; grid-template-columns: 90px 1fr; align-items: baseline; font-size: 44px; }
+.asks li::before { content: counter(ask); font: 700 56px var(--font-en); color: var(--accent); }
+
+/* ---------- accessibility and output ---------- */
+@media (prefers-reduced-motion: reduce) {
+  .slide, [data-step], .progress i, .bar .fill { transition: none !important; }
+  .slide { --shift: 0px; }
+  .slide.is-past { --shift: 0px; }
+}
+@media print {
+  @page { size: 1600px 900px; margin: 0; }
+  html, body { overflow: visible; block-size: auto; background: none; }
+  .deck { position: static; }
+  .slide { position: relative; top: auto; left: auto; margin: 0; transform: none; opacity: 1; visibility: visible; break-after: page; print-color-adjust: exact; -webkit-print-color-adjust: exact; }
+  [data-step] { opacity: 1; transform: none; }
+  .bar .fill { inline-size: var(--v); transition: none; }
+  .slide:last-child { break-after: auto; }
+  .progress, .counter, .notes-panel, .sr-only { display: none !important; }
+}
+</style>
+</head>
+<body>
+
+<main class="deck" id="deck">
+
+  <section class="slide" data-layout="title">
+    <p class="kicker"><span data-lang="ar">مراجعة الربع الثالث 2026</span><span data-lang="en">Q3 2026 review</span></p>
+    <h1><span data-lang="ar">برنامج «إتقان» لتأهيل الكفاءات الرقمية</span><span data-lang="en">Itqan: building digital talent</span></h1>
+    <div class="meta">
+      <span data-lang="ar">عرض للجنة التوجيهية</span><span data-lang="en">Steering committee briefing</span>
+      <span data-lang="ar">15 نوفمبر 2026</span><span data-lang="en">15 November 2026</span>
+    </div>
+    <aside class="notes" data-lang="ar">رحّب باللجنة، واذكر أن العرض ينتهي بثلاثة قرارات مطلوبة.</aside>
+    <aside class="notes" data-lang="en">Welcome the committee; say the deck ends with three decisions.</aside>
+  </section>
+
+  <section class="slide" data-layout="statement">
+    <p class="kicker"><span data-lang="ar">الخلاصة</span><span data-lang="en">The headline</span></p>
+    <h2><span data-lang="ar">بلغنا مستهدف العام قبل موعده بربع كامل، وتحدّينا الآن <mark>الجودة لا العدد</mark></span><span data-lang="en">We hit the annual target a full quarter early. The challenge now is <mark>quality, not volume</mark></span></h2>
+  </section>
+
+  <section class="slide" data-layout="numbers">
+    <p class="kicker"><span data-lang="ar">الأداء</span><span data-lang="en">Performance</span></p>
+    <h2><span data-lang="ar">ثلاثة أرقام تلخّص الربع</span><span data-lang="en">Three numbers sum up the quarter</span></h2>
+    <div class="trio">
+      <div data-step><span class="num">12,400</span><p data-lang="ar">متدرّبًا أتمّوا البرنامج</p><p data-lang="en">learners completed the programme</p><small><span data-lang="ar">124% من المستهدف</span><span data-lang="en">124% of target</span></small></div>
+      <div data-step><span class="num">87%</span><p data-lang="ar">نسبة الإتمام</p><p data-lang="en">completion rate</p><small><span data-lang="ar"><bdi dir="ltr">+9</bdi> نقاط عن الربع الثاني</span><span data-lang="en">+9 points vs Q2</span></small></div>
+      <div data-step><span class="num"><bdi dir="ltr">4.6 / 5</bdi></span><p data-lang="ar">رضا المتدرّبين</p><p data-lang="en">learner satisfaction</p><small><span data-lang="ar">الأعلى منذ الانطلاق</span><span data-lang="en">highest since launch</span></small></div>
+    </div>
+    <p class="source"><span data-lang="ar">المصدر: منصة التعلّم، حتى 30 سبتمبر 2026</span><span data-lang="en">Source: learning platform, to 30 September 2026</span></p>
+  </section>
+
+  <section class="slide" data-layout="chart">
+    <p class="kicker"><span data-lang="ar">أين الفجوة؟</span><span data-lang="en">Where is the gap?</span></p>
+    <h2><span data-lang="ar">مسار الأمن السيبراني وحده دون مستهدف الإتمام</span><span data-lang="en">Only the cybersecurity track is below its completion target</span></h2>
+    <div class="bars" role="img" data-ar-aria-label="نسبة الإتمام حسب المسار: البيانات 93، الذكاء الاصطناعي 91، السحابة 88، الأمن السيبراني 64" data-en-aria-label="Completion by track: Data 93, AI 91, Cloud 88, Cybersecurity 64">
+      <div class="bar" style="--v: 93%"><span data-lang="ar">تحليل البيانات</span><span data-lang="en">Data analysis</span><span class="track"><i class="fill"></i></span><span class="num">93%</span></div>
+      <div class="bar" style="--v: 91%"><span data-lang="ar">الذكاء الاصطناعي</span><span data-lang="en">Artificial intelligence</span><span class="track"><i class="fill"></i></span><span class="num">91%</span></div>
+      <div class="bar" style="--v: 88%"><span data-lang="ar">الحوسبة السحابية</span><span data-lang="en">Cloud computing</span><span class="track"><i class="fill"></i></span><span class="num">88%</span></div>
+      <div class="bar hot" style="--v: 64%"><span data-lang="ar">الأمن السيبراني</span><span data-lang="en">Cybersecurity</span><span class="track"><i class="fill"></i></span><span class="num">64%</span></div>
+    </div>
+  </section>
+
+  <section class="slide" data-layout="split">
+    <div class="split">
+      <div>
+        <p class="kicker"><span data-lang="ar">التشخيص</span><span data-lang="en">Diagnosis</span></p>
+        <h2><span data-lang="ar">السبب في التصميم لا في المتدرّبين</span><span data-lang="en">The cause is the design, not the learners</span></h2>
+      </div>
+      <ul class="points">
+        <li data-step><h3><span data-lang="ar">مختبرات طويلة بلا توقّف</span><span data-lang="en">Long labs with no checkpoints</span></h3><p data-lang="ar">أربع ساعات متصلة، وينسحب 31% عند المختبر الثاني.</p><p data-lang="en">Four unbroken hours; 31% drop out at lab two.</p></li>
+        <li data-step><h3><span data-lang="ar">متطلبات سابقة غير معلنة</span><span data-lang="en">Unstated prerequisites</span></h3><p data-lang="ar">نصف المنسحبين لم يدرسوا الشبكات من قبل.</p><p data-lang="en">Half of those who left had never studied networking.</p></li>
+        <li data-step><h3><span data-lang="ar">دعم محدود خارج الدوام</span><span data-lang="en">Little support after hours</span></h3><p data-lang="ar">معظم المتدرّبين يتعلّمون مساءً، والمدرّبون متاحون نهارًا.</p><p data-lang="en">Most learners study in the evening; instructors are available by day.</p></li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="slide" data-layout="compare">
+    <p class="kicker"><span data-lang="ar">المقترح</span><span data-lang="en">Proposal</span></p>
+    <h2><span data-lang="ar">إعادة تصميم المسار دون زيادة مدّته</span><span data-lang="en">Redesign the track without making it longer</span></h2>
+    <div class="compare">
+      <div><h3><span data-lang="ar">اليوم</span><span data-lang="en">Today</span></h3>
+        <ul><li><span data-lang="ar">6 مختبرات، 4 ساعات لكلٍّ منها</span><span data-lang="en">6 labs of 4 hours each</span></li><li><span data-lang="ar">لا اختبار تحديد مستوى</span><span data-lang="en">No placement test</span></li><li><span data-lang="ar">دعم نهاري فقط</span><span data-lang="en">Daytime support only</span></li></ul></div>
+      <svg class="arrow" viewBox="0 0 64 64" fill="none" aria-hidden="true"><path d="M10 32h44M38 16l16 16-16 16" stroke="currentColor" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      <div class="to"><h3><span data-lang="ar">المقترح</span><span data-lang="en">Proposed</span></h3>
+        <ul><li><span data-lang="ar">16 مختبرًا قصيرًا، 90 دقيقة لكلٍّ منها</span><span data-lang="en">16 short labs of 90 minutes each</span></li><li><span data-lang="ar">اختبار تحديد مستوى ووحدة تمهيدية</span><span data-lang="en">Placement test and a bridging unit</span></li><li><span data-lang="ar">ساعات دعم مسائية</span><span data-lang="en">Evening support hours</span></li></ul></div>
+    </div>
+  </section>
+
+  <section class="slide" data-layout="timeline">
+    <p class="kicker"><span data-lang="ar">الخطة</span><span data-lang="en">Plan</span></p>
+    <h2><span data-lang="ar">المسار الجديد جاهز مع دفعة يناير</span><span data-lang="en">The new track is ready for the January cohort</span></h2>
+    <ol class="timeline">
+      <li data-step><time datetime="2026-11"><span data-lang="ar">نوفمبر</span><span data-lang="en">November</span></time><h3><span data-lang="ar">اعتماد التصميم</span><span data-lang="en">Design approved</span></h3><p data-lang="ar">قرار اللجنة اليوم</p><p data-lang="en">Committee decision today</p></li>
+      <li data-step><time datetime="2026-12"><span data-lang="ar">ديسمبر</span><span data-lang="en">December</span></time><h3><span data-lang="ar">بناء المختبرات</span><span data-lang="en">Labs built</span></h3><p data-lang="ar">16 مختبرًا ووحدة تمهيدية</p><p data-lang="en">16 labs and a bridging unit</p></li>
+      <li data-step><time datetime="2027-01"><span data-lang="ar">يناير</span><span data-lang="en">January</span></time><h3><span data-lang="ar">دفعة تجريبية</span><span data-lang="en">Pilot cohort</span></h3><p data-lang="ar">400 متدرّب</p><p data-lang="en">400 learners</p></li>
+      <li data-step><time datetime="2027-03"><span data-lang="ar">مارس</span><span data-lang="en">March</span></time><h3><span data-lang="ar">التعميم</span><span data-lang="en">Full rollout</span></h3><p data-lang="ar">إذا بلغ الإتمام 85%</p><p data-lang="en">If completion reaches 85%</p></li>
+    </ol>
+  </section>
+
+  <section class="slide" data-layout="ask">
+    <p class="kicker"><span data-lang="ar">المطلوب من اللجنة</span><span data-lang="en">What we need from you</span></p>
+    <h2><span data-lang="ar">ثلاثة قرارات اليوم</span><span data-lang="en">Three decisions today</span></h2>
+    <ol class="asks">
+      <li data-step><span data-lang="ar">اعتماد إعادة تصميم مسار الأمن السيبراني</span><span data-lang="en">Approve the redesign of the cybersecurity track</span></li>
+      <li data-step><span data-lang="ar">تخصيص مدرّبَين لساعات الدعم المسائية</span><span data-lang="en">Assign two instructors to evening support hours</span></li>
+      <li data-step><span data-lang="ar">تثبيت 85% معيارًا للتعميم في مارس</span><span data-lang="en">Set 85% completion as the bar for the March rollout</span></li>
+    </ol>
+  </section>
+
+</main>
+
+<div class="progress" aria-hidden="true"><i id="bar"></i></div>
+<div class="counter" aria-hidden="true"><bdi dir="ltr" id="counter">1 / 1</bdi></div>
+<div class="notes-panel" id="notes"></div>
+<div class="sr-only" aria-live="polite" id="live"></div>
+
+<script>
+(function () {
+  var root = document.documentElement, DIRS = { ar: "rtl", en: "ltr" };
+  var slides = Array.prototype.slice.call(document.querySelectorAll(".slide"));
+  var bar = document.getElementById("bar"), counter = document.getElementById("counter");
+  var live = document.getElementById("live"), notes = document.getElementById("notes");
+  var index = 0;
+
+  function setLang(lang) {
+    if (!DIRS[lang]) lang = "ar";
+    root.lang = lang; root.dir = DIRS[lang];
+    var prefix = "data-" + lang + "-";
+    document.querySelectorAll("*").forEach(function (el) {
+      Array.prototype.slice.call(el.attributes).forEach(function (a) {
+        if (a.name.indexOf(prefix) !== 0) return;
+        var name = a.name.slice(prefix.length);
+        if (name === "text") el.textContent = a.value; else el.setAttribute(name, a.value);
+      });
+    });
+    render();
+  }
+  function fit() { root.style.setProperty("--scale", Math.min(innerWidth / 1600, innerHeight / 900)); }
+  function steps(slide) { return Array.prototype.slice.call(slide.querySelectorAll("[data-step]")); }
+  function render() {
+    slides.forEach(function (s, i) {
+      s.classList.toggle("is-active", i === index);
+      s.classList.toggle("is-past", i < index);
+      s.setAttribute("aria-hidden", i === index ? "false" : "true");
+    });
+    bar.style.inlineSize = ((index + 1) / slides.length * 100) + "%";
+    counter.textContent = (index + 1) + " / " + slides.length;
+    var heading = slides[index].querySelector("h1, h2");
+    live.textContent = heading ? heading.innerText : "";
+    var note = slides[index].querySelector('.notes[data-lang="' + root.lang + '"]');
+    notes.textContent = note ? note.textContent : "";
+    if (location.hash !== "#" + (index + 1)) history.replaceState(null, "", "#" + (index + 1));
+  }
+  function go(i, revealAll) {
+    index = Math.max(0, Math.min(slides.length - 1, i));
+    steps(slides[index]).forEach(function (el) { el.classList.toggle("is-shown", !!revealAll); });
+    render();
+  }
+  function next() {
+    var hidden = steps(slides[index]).filter(function (el) { return !el.classList.contains("is-shown"); });
+    if (hidden.length) hidden[0].classList.add("is-shown"); else if (index < slides.length - 1) go(index + 1, false);
+  }
+  function prev() {
+    var shown = steps(slides[index]).filter(function (el) { return el.classList.contains("is-shown"); });
+    if (shown.length) shown[shown.length - 1].classList.remove("is-shown"); else if (index > 0) go(index - 1, true);
+  }
+
+  document.addEventListener("keydown", function (e) {
+    if (e.metaKey || e.ctrlKey || e.altKey) return;
+    var rtl = root.dir === "rtl", k = e.key;
+    if (k === "ArrowLeft") { rtl ? next() : prev(); }
+    else if (k === "ArrowRight") { rtl ? prev() : next(); }
+    else if (k === " " || k === "PageDown" || k === "ArrowDown" || k === "Enter") { next(); }
+    else if (k === "PageUp" || k === "ArrowUp" || k === "Backspace") { prev(); }
+    else if (k === "Home") { go(0, false); }
+    else if (k === "End") { go(slides.length - 1, true); }
+    else if (k === "l" || k === "L") { setLang(root.lang === "ar" ? "en" : "ar"); }
+    else if (k === "n" || k === "N") { document.body.classList.toggle("show-notes"); }
+    else if (k === "p" || k === "P") { window.print(); }
+    else if (k === "f" || k === "F") { document.fullscreenElement ? document.exitFullscreen() : root.requestFullscreen && root.requestFullscreen(); }
+    else { return; }
+    e.preventDefault();
+  });
+
+  var startX = null;
+  document.addEventListener("touchstart", function (e) { startX = e.touches[0].clientX; }, { passive: true });
+  document.addEventListener("touchend", function (e) {
+    if (startX === null) return;
+    var dx = e.changedTouches[0].clientX - startX; startX = null;
+    if (Math.abs(dx) < 50) return;
+    var forward = root.dir === "rtl" ? dx > 0 : dx < 0;   /* swipe towards the reading start to advance */
+    forward ? next() : prev();
+  }, { passive: true });
+  document.addEventListener("click", function (e) { if (!e.target.closest("a, button, input, .notes-panel")) next(); });
+
+  window.addEventListener("resize", fit);
+  window.addEventListener("hashchange", function () { var n = parseInt(location.hash.slice(1), 10); if (n && n - 1 !== index) go(n - 1, true); });
+  fit();
+  var wanted = new URLSearchParams(location.search).get("lang");
+  var first = (parseInt(location.hash.slice(1), 10) || 1) - 1;
+  setLang(wanted || root.lang);
+  go(first, first > 0);
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,93 @@
+/* Dar Al-Warraq: one stylesheet for both languages.
+   Logical properties only; type differences live in :lang() rules. */
+:root {
+  --ink: #1d1a16; --soft: #5d5548; --paper: #f3ecdf; --card: #fbf7ee;
+  --oxblood: #7a1f2b; --gold: #b98a3a; --line: #d9cdb6;
+  --text-ar: "IBM Plex Sans Arabic", "Noto Sans Arabic", "Segoe UI", Tahoma, sans-serif;
+  --text-en: "IBM Plex Sans", "Segoe UI", system-ui, sans-serif;
+  --display-ar: "Noto Naskh Arabic", "Amiri", "Traditional Arabic", "Times New Roman", serif;
+  --display-en: "Fraunces", Georgia, "Times New Roman", serif;
+  --wrap: 68rem; --gutter: clamp(1.25rem, 5vw, 3.5rem);
+  --dir: 1;
+}
+[dir="rtl"] { --dir: -1; }
+
+*, *::before, *::after { box-sizing: border-box; }
+body { margin: 0; background: var(--paper); color: var(--ink); font-size: 1.0625rem; }
+/* :lang() switches variables; fonts apply at language boundaries and on headings, so nested spans inherit. */
+:lang(ar) { --text: var(--text-ar); --display: var(--display-ar); --lh: 1.9; --lh-head: 1.5; letter-spacing: 0; font-style: normal; }
+:lang(en) { --text: var(--text-en); --display: var(--display-en); --lh: 1.65; --lh-head: 1.12; }
+[lang] { font-family: var(--text); line-height: var(--lh); }
+h1, h2, h3, .display { margin: 0; font-weight: 700; text-wrap: balance; font-family: var(--display); line-height: var(--lh-head); }
+:is(h1, h2, h3, .display):lang(en) { letter-spacing: -0.015em; font-weight: 600; }
+h1 { font-size: clamp(2.6rem, 7vw, 5.2rem); }
+h1:lang(ar) { font-size: clamp(2.8rem, 7.5vw, 5.6rem); }
+h2 { font-size: clamp(1.7rem, 3.4vw, 2.6rem); }
+h3 { font-size: 1.3rem; }
+p { margin: 0; text-wrap: pretty; }
+a { color: inherit; text-underline-offset: .3em; text-decoration-thickness: 1px; }
+em:lang(en) { font-style: italic; }
+em:lang(ar) { font-style: normal; color: var(--oxblood); }
+
+.wrap { max-inline-size: var(--wrap); margin-inline: auto; padding-inline: var(--gutter); }
+.label { color: var(--oxblood); font-weight: 600; font-size: .95rem; }
+.label:lang(en) { letter-spacing: .14em; text-transform: uppercase; font-size: .76rem; }
+
+.masthead { border-block-end: 1px solid var(--ink); }
+.masthead .wrap { display: flex; align-items: baseline; gap: 2rem; padding-block: 1.1rem; }
+.brand { font-size: 1.7rem; font-weight: 700; text-decoration: none; }
+.masthead nav { display: flex; gap: 1.6rem; margin-inline-start: auto; }
+.masthead nav a { text-decoration: none; color: var(--soft); }
+.masthead nav a:hover { color: var(--oxblood); }
+.lang-link { border-inline-start: 1px solid var(--line); padding-inline-start: 1.6rem; font-weight: 500; }
+
+.hero { padding-block: clamp(3rem, 9vw, 7rem) clamp(2.5rem, 6vw, 5rem); position: relative; overflow: hidden; }
+.hero .wrap { display: grid; grid-template-columns: 1.4fr .8fr; gap: 3rem; align-items: end; }
+.hero p.lead { margin-block-start: 1.6rem; max-inline-size: 30rem; font-size: 1.2rem; color: var(--soft); }
+.hero .cta { display: inline-flex; align-items: center; gap: .7rem; margin-block-start: 2rem; padding: .8rem 1.6rem; background: var(--oxblood); color: var(--paper); text-decoration: none; font-weight: 600; border-radius: 2px; }
+.hero .cta svg { inline-size: 1.1em; block-size: 1.1em; transform: scaleX(var(--dir)); }
+.colophon { border-inline-start: 3px solid var(--gold); padding-inline-start: 1.4rem; color: var(--soft); font-size: .98rem; }
+.colophon strong { display: block; font-size: 3.4rem; line-height: 1.1; color: var(--ink); font-family: var(--display-en); font-weight: 600; }
+
+.shelf { background: var(--card); border-block: 1px solid var(--line); padding-block: clamp(3rem, 7vw, 5rem); }
+.books { list-style: none; margin: 2.2rem 0 0; padding: 0; display: grid; grid-template-columns: repeat(3, 1fr); gap: 2rem; }
+.book { display: grid; grid-template-columns: 5.5rem 1fr; gap: 1.2rem; align-items: start; }
+.cover { aspect-ratio: 2 / 3; border-radius: 2px; background: var(--oxblood); box-shadow: 0 8px 18px rgb(29 26 22 / .22); position: relative; }
+.cover::after { content: ""; position: absolute; inset-block: 0; inset-inline-start: 10%; inline-size: 2px; background: rgb(255 255 255 / .25); }
+.cover.b { background: #25423a; } .cover.c { background: var(--gold); }
+.book p { color: var(--soft); font-size: .98rem; }
+.book .price { margin-block-start: .5rem; color: var(--ink); font-weight: 600; }
+
+.evenings { padding-block: clamp(3rem, 7vw, 5rem); }
+.agenda { list-style: none; margin: 2rem 0 0; padding: 0; border-block-start: 1px solid var(--ink); }
+.agenda li { display: grid; grid-template-columns: 9rem 1fr auto; gap: 1.5rem; align-items: baseline; padding-block: 1.2rem; border-block-end: 1px solid var(--line); }
+.agenda time { font-weight: 600; color: var(--oxblood); }
+.agenda .who { color: var(--soft); }
+.agenda .seat { font-size: .9rem; color: var(--soft); text-align: end; }
+
+.visit { background: var(--ink); color: var(--paper); padding-block: clamp(3rem, 7vw, 5rem); }
+.visit .wrap { display: grid; grid-template-columns: 1fr 1fr; gap: 3rem; }
+.visit .label { color: var(--gold); }
+.visit dl { margin: 1.6rem 0 0; display: grid; gap: 1rem; }
+.visit dt { color: #b7ab95; font-size: .9rem; }
+.visit dd { margin: 0; }
+.visit form { align-self: end; display: grid; gap: .8rem; }
+.visit label { font-weight: 500; }
+.visit .row { display: flex; gap: .6rem; }
+.visit input { flex: 1; min-inline-size: 0; font: inherit; padding: .75rem .9rem; border: 1px solid #5d5548; background: transparent; color: inherit; border-radius: 2px; }
+.visit button { font: inherit; font-weight: 600; padding: .75rem 1.4rem; border: 0; background: var(--gold); color: var(--ink); border-radius: 2px; cursor: pointer; }
+:is(a, button, input):focus-visible { outline: 2px solid var(--gold); outline-offset: 3px; }
+
+.foot { padding-block: 1.6rem; font-size: .9rem; color: var(--soft); }
+.foot .wrap { display: flex; justify-content: space-between; gap: 1rem; flex-wrap: wrap; }
+
+@media (max-width: 820px) {
+  .masthead nav a:not(.lang-link) { display: none; }
+  .hero .wrap, .visit .wrap, .books { grid-template-columns: 1fr; }
+  .agenda li { grid-template-columns: 1fr; gap: .2rem; }
+  .agenda .seat { text-align: start; }
+}
+@media (prefers-reduced-motion: no-preference) {
+  .hero .cta svg { transition: translate .25s; }
+  .hero .cta:hover svg { translate: calc(var(--dir) * 5px) 0; }
+}

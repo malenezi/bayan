@@ -1,0 +1,14 @@
+{
+  "name": "bayan",
+  "owner": { "name": "Mamdouh Alenezi", "url": "https://github.com/malenezi" },
+  "metadata": { "description": "Arabic-first skills for Claude", "version": "1.0.0" },
+  "plugins": [
+    {
+      "name": "bayan",
+      "source": "./",
+      "description": "Bilingual Arabic/English websites, HTML presentations, RTL audits and Arabic UX writing, each with scripts that check the result.",
+      "category": "design",
+      "tags": ["arabic", "rtl", "i18n"]
+    }
+  ]
+}

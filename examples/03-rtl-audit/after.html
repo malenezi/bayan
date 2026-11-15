@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>نقطة | تتبّع الشحنات</title>
+<style>
+:root { --dir: 1; }
+[dir="rtl"] { --dir: -1; }
+body { font-family: Inter, system-ui, sans-serif; line-height: 1.5; margin: 0; color: #1c1c28; }
+[lang|="ar"] { font-family: "IBM Plex Sans Arabic", "Noto Sans Arabic", "Segoe UI", Tahoma, sans-serif; line-height: 1.8; }
+:lang(ar) { letter-spacing: 0; }
+.header { display: flex; padding: 16px 32px; border-block-end: 1px solid #ddd; }
+.header .logo { font-weight: 700; margin-inline-end: auto; }
+.header nav a { margin-inline-start: 24px; color: inherit; text-decoration: none; }
+h1 { font-size: 40px; line-height: 1.4; }
+.tag { font-size: 14px; font-weight: 600; color: #6a5cff; }
+.tag:lang(en) { text-transform: uppercase; letter-spacing: 0.15em; font-size: 12px; }
+.hero { padding: 64px 32px; }
+.hero em { font-style: normal; color: #6a5cff; }
+.hero em:lang(en) { font-style: italic; }
+.card { border: 1px solid #ddd; border-inline-start: 4px solid #6a5cff; border-radius: 8px; padding: 20px; padding-inline-start: 28px; margin: 16px 32px; position: relative; }
+.card .status { position: absolute; inset-block-start: 20px; inset-inline-end: 20px; font-size: 13px; }
+.card .id { overflow-wrap: anywhere; color: #666; }
+.progress { block-size: 8px; background: #eee; border-radius: 4px; overflow: hidden; }
+.progress i { display: block; block-size: 100%; inline-size: 60%; background: #6a5cff; }
+.next { display: inline-block; margin-block-start: 12px; }
+.drawer { position: fixed; inset-block-start: 0; inset-inline-start: 0; inline-size: 280px; transform: translateX(calc(var(--dir) * -100%)); transition: transform .3s; }
+form { margin: 32px; display: grid; gap: 12px; max-inline-size: 320px; }
+label { display: grid; gap: 4px; }
+input { padding: 10px; font: inherit; }
+button { justify-self: start; padding: 10px 24px; font: inherit; }
+@media (prefers-reduced-motion: reduce) { .drawer { transition: none; } }
+</style>
+</head>
+<body>
+<header class="header">
+  <div class="logo">نقطة</div>
+  <nav aria-label="التنقّل الرئيسي"><a href="#">الرئيسية</a><a href="#">الشحنات</a><a href="#" lang="en" dir="ltr">English</a></nav>
+</header>
+<main>
+<div class="hero">
+  <span class="tag">تتبّع الشحنات</span>
+  <h1>اعرف أين شحنتك، <em>لحظة بلحظة</em></h1>
+  <p>تبحث عن شحنة؟ أدخل رقم التتبّع وسنخبرك بمكانها.</p>
+</div>
+<div class="card">
+  <span class="status">في الطريق</span>
+  <h2>شحنة رقم <bdi dir="ltr">NQ-2026-00417</bdi></h2>
+  <p class="id">من الرياض إلى جدة · الوزن من 12 إلى 15 كجم · الوصول خلال 3 أيام</p>
+  <div class="progress" role="progressbar" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100" aria-label="تقدّم الشحنة"><i></i></div>
+  <p>للاستفسار اتصل على <bdi dir="ltr">+966 11 555 0199</bdi> أو راسلنا على <bdi dir="ltr">@nuqta_help</bdi></p>
+  <a class="next" href="#">التفاصيل ←</a>
+</div>
+<form>
+  <label>الاسم <input type="text" name="name" dir="auto" autocomplete="name"></label>
+  <label>البريد الإلكتروني <input type="email" name="email" dir="ltr" autocomplete="email" placeholder="name@example.com"></label>
+  <label>رقم الجوال <input type="tel" name="phone" dir="ltr" autocomplete="tel"></label>
+  <button type="submit">تتبّع</button>
+</form>
+</main>
+<aside class="drawer" aria-label="القائمة">القائمة</aside>
+</body>
+</html>

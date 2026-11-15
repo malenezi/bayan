@@ -1,0 +1,359 @@
+<!doctype html>
+<!--
+  Example 02: executive proposal deck (Arabic first, English with the L key).
+  Built from skills/arabic-html-slides/assets/deck-starter.html: same engine, new theme and storyline.
+  Keys: arrows / space / Home / End, L = language, F = full screen, N = notes, P = print to PDF.
+-->
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title data-ar-text="نافذة واحدة لكل مستفيد | مقترح" data-en-text="One window for every customer | Proposal">نافذة واحدة لكل مستفيد | مقترح</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Alexandria:wght@500;700&family=IBM+Plex+Sans+Arabic:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* ---------- theme tokens ---------- */
+:root {
+  --bg: #f4f1ea; --ink: #101a33; --muted: #5b6480; --line: #d8d2c4; --card: #fffdf8;
+  --accent: #d9482b; --accent-soft: #f6d9d0; --good: #1f7a5a;
+  --font-ar: "IBM Plex Sans Arabic", "Noto Sans Arabic", "Segoe UI", Tahoma, sans-serif;
+  --font-en: "IBM Plex Sans", "Segoe UI", system-ui, sans-serif;
+  --display-ar: "Noto Kufi Arabic", "IBM Plex Sans Arabic", "Segoe UI", Tahoma, sans-serif;
+  --display-en: "IBM Plex Sans", "Segoe UI", system-ui, sans-serif;
+  --dir: 1; --scale: 1;
+}
+[dir="rtl"] { --dir: -1; }
+
+/* ---------- language mechanics ---------- */
+html[lang="ar"] [data-lang]:not([data-lang="ar"]),
+html[lang="en"] [data-lang]:not([data-lang="en"]) { display: none !important; }
+
+/* ---------- engine: a 1600x900 stage scaled to the window ---------- */
+*, *::before, *::after { box-sizing: border-box; }
+html, body { margin: 0; block-size: 100%; background: #0b1020; overflow: hidden; }
+.deck { position: fixed; inset: 0; }
+.slide {
+  /* Centred with physical offsets on purpose: the stage sits in the middle in both directions. */
+  position: absolute; top: 50%; left: 50%; margin: -450px 0 0 -800px;
+  inline-size: 1600px; block-size: 900px;
+  background: var(--bg); color: var(--ink); padding: 90px 110px 100px;
+  display: flex; flex-direction: column; justify-content: center; overflow: hidden;
+  --shift: 70px; opacity: 0; visibility: hidden;
+  transform: translateX(calc(var(--dir) * var(--shift))) scale(var(--scale));
+  transition: opacity .55s ease, transform .7s cubic-bezier(.2, .7, .2, 1), visibility 0s .55s;
+}
+.slide.is-past { --shift: -70px; }
+.slide.is-active { --shift: 0px; opacity: 1; visibility: visible; transition-delay: 0s; }
+[data-step] { opacity: 0; transform: translateY(18px); transition: opacity .5s, transform .5s; }
+[data-step].is-shown { opacity: 1; transform: none; }
+
+.progress { position: fixed; inset-block-end: 0; inset-inline: 0; block-size: 4px; background: rgb(255 255 255 / .12); z-index: 5; }
+.progress i { display: block; block-size: 100%; inline-size: 0; background: var(--accent); transition: inline-size .4s; }
+.counter { position: fixed; inset-block-end: 14px; inset-inline-end: 20px; z-index: 5; color: #9aa3bd; font: 500 13px var(--font-en); }
+.notes { display: none; }
+.notes-panel { position: fixed; inset-inline: 0; inset-block-end: 0; z-index: 6; background: rgb(11 16 32 / .94); color: #e9ecf5; padding: 18px 28px 26px; font-size: 18px; max-block-size: 34vh; overflow: auto; display: none; }
+.show-notes .notes-panel { display: block; }
+.sr-only { position: absolute; inline-size: 1px; block-size: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+
+/* ---------- type ---------- */
+body { font-size: 32px; }
+/* :lang() only switches variables; fonts are applied at language boundaries and on headings (see the web starter). */
+:lang(ar) { --text: var(--font-ar); --display: var(--display-ar); --lh: 1.75; --lh-head: 1.45; letter-spacing: 0; font-style: normal; }
+:lang(en) { --text: var(--font-en); --display: var(--display-en); --lh: 1.5; --lh-head: 1.12; }
+[lang] { font-family: var(--text); line-height: var(--lh); }
+h1, h2, h3, p, ul, ol { margin: 0; }
+h1, h2, h3 { font-family: var(--display); line-height: var(--lh-head); }
+h1, h2 { text-wrap: balance; font-weight: 700; }
+:is(h1, h2, h3):lang(en) { letter-spacing: -0.015em; }
+h1 { font-size: 84px; }
+h2 { font-size: 62px; max-inline-size: 22ch; }
+h2:lang(en) { max-inline-size: 26ch; }
+h3 { font-size: 38px; font-weight: 600; }
+.kicker { color: var(--accent); font-weight: 600; font-size: 28px; margin-block-end: 22px; display: flex; align-items: center; gap: 14px; }
+.kicker::before { content: ""; inline-size: 44px; block-size: 3px; background: currentColor; }
+.kicker:lang(en) { letter-spacing: .14em; text-transform: uppercase; font-size: 22px; }
+.muted { color: var(--muted); }
+.num { font-family: var(--font-en); font-weight: 700; font-variant-numeric: tabular-nums; }
+.source { position: absolute; inset-block-end: 40px; inset-inline-start: 110px; font-size: 20px; color: var(--muted); }
+
+/* ---------- layouts ---------- */
+.slide[data-layout="title"] { background: var(--ink); color: #f4f1ea; justify-content: flex-end; }
+.slide[data-layout="title"] h1 { max-inline-size: 15ch; }
+.slide[data-layout="title"] .meta { margin-block-start: 36px; display: flex; gap: 40px; color: #aab2cc; font-size: 28px; }
+.slide[data-layout="title"]::before { content: ""; position: absolute; inset-block-start: -220px; inset-inline-end: -160px; inline-size: 720px; block-size: 720px; border-radius: 50%; border: 90px solid var(--accent); opacity: .95; }
+
+.slide[data-layout="statement"] h2 { font-size: 86px; max-inline-size: 19ch; }
+.slide[data-layout="statement"] h2:lang(en) { max-inline-size: 22ch; }
+.slide[data-layout="statement"] mark { background: none; color: var(--accent); }
+
+.trio { display: grid; grid-template-columns: repeat(3, 1fr); gap: 36px; margin-block-start: 56px; }
+.trio > div { background: var(--card); border: 1px solid var(--line); border-radius: 22px; padding: 36px; border-block-start: 6px solid var(--accent); }
+.trio .num { display: block; font-size: 100px; line-height: 1.1; white-space: nowrap; }
+.trio p { font-size: 31px; color: var(--muted); margin-block-start: 10px; }
+.trio small { display: inline-block; margin-block-start: 16px; padding: 4px 14px; border-radius: 999px; background: #dcefe7; color: var(--good); font-size: 24px; font-weight: 600; }
+
+.bars { margin-block-start: 56px; display: grid; gap: 30px; }
+.bar { display: grid; grid-template-columns: 360px 1fr 120px; align-items: center; gap: 28px; font-size: 32px; }
+.bar .track { block-size: 44px; background: #e7e1d3; border-radius: 8px; overflow: hidden; }
+/* Bars grow with inline-size from the inline start; transform-origin is physical and would not mirror. */
+.bar .fill { display: block; block-size: 100%; inline-size: 0; background: var(--ink); border-radius: 8px; transition: inline-size 1s cubic-bezier(.2, .7, .2, 1) .25s; }
+.bar.hot .fill { background: var(--accent); }
+.is-active .bar .fill { inline-size: var(--v); }
+.bar .num { text-align: end; }
+
+.split { display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: center; }
+.points { list-style: none; padding: 0; display: grid; gap: 38px; }
+.points li { padding-inline-start: 30px; border-inline-start: 5px solid var(--accent); }
+.points li p { color: var(--muted); font-size: 30px; }
+
+.compare { display: grid; grid-template-columns: 1fr auto 1fr; gap: 36px; align-items: stretch; margin-block-start: 48px; }
+.compare > div { border-radius: 22px; padding: 48px; border: 1px solid var(--line); background: var(--card); }
+.compare > div.to { background: var(--ink); color: #f4f1ea; border-color: var(--ink); }
+.compare ul { margin-block-start: 18px; padding-inline-start: 1.1em; display: grid; gap: 16px; font-size: 32px; }
+.compare .arrow { align-self: center; inline-size: 64px; block-size: 64px; color: var(--accent); transform: scaleX(var(--dir)); }
+
+.timeline { list-style: none; padding: 0; margin-block-start: 64px; display: grid; grid-template-columns: repeat(4, 1fr); position: relative; }
+.timeline::before { content: ""; position: absolute; inset-block-start: 13px; inset-inline: 0; block-size: 3px; background: var(--line); }
+.timeline li { position: relative; padding-block-start: 60px; padding-inline-end: 32px; }
+.timeline li::before { content: ""; position: absolute; inset-block-start: 0; inset-inline-start: 0; inline-size: 28px; block-size: 28px; border-radius: 50%; background: var(--bg); border: 5px solid var(--accent); }
+.timeline time { display: block; color: var(--accent); font-weight: 600; font-size: 28px; }
+.timeline p { font-size: 28px; color: var(--muted); }
+
+.asks { counter-reset: ask; list-style: none; padding: 0; margin-block-start: 56px; display: grid; gap: 34px; }
+.asks li { counter-increment: ask; display: grid; grid-template-columns: 90px 1fr; align-items: baseline; font-size: 44px; }
+.asks li::before { content: counter(ask); font: 700 56px var(--font-en); color: var(--accent); }
+
+/* ---------- accessibility and output ---------- */
+@media (prefers-reduced-motion: reduce) {
+  .slide, [data-step], .progress i, .bar .fill { transition: none !important; }
+  .slide { --shift: 0px; }
+  .slide.is-past { --shift: 0px; }
+}
+@media print {
+  @page { size: 1600px 900px; margin: 0; }
+  html, body { overflow: visible; block-size: auto; background: none; }
+  .deck { position: static; }
+  .slide { position: relative; top: auto; left: auto; margin: 0; transform: none; opacity: 1; visibility: visible; break-after: page; print-color-adjust: exact; -webkit-print-color-adjust: exact; }
+  [data-step] { opacity: 1; transform: none; }
+  .bar .fill { inline-size: var(--v); transition: none; }
+  .slide:last-child { break-after: auto; }
+  .progress, .counter, .notes-panel, .sr-only { display: none !important; }
+}
+
+/* ---------- theme for this deck: dark, one amber accent, one recurring device (the window frame) ---------- */
+:root {
+  --bg: #0d1117; --ink: #f2efe8; --muted: #9aa4b5; --line: #263041; --card: #151c27;
+  --accent: #f0b429; --accent-soft: #3a2f10; --good: #5fd0a5;
+  --display-ar: "Alexandria", "IBM Plex Sans Arabic", "Segoe UI", Tahoma, sans-serif;
+}
+html, body { background: #05070b; }
+.slide { background: radial-gradient(1200px 700px at 85% -10%, #1a2436 0%, var(--bg) 60%); }
+[dir="rtl"] .slide { background: radial-gradient(1200px 700px at 15% -10%, #1a2436 0%, var(--bg) 60%); }
+:lang(en) { --display: "Alexandria", var(--font-en); }
+.slide[data-layout="title"] { background: var(--bg); color: var(--ink); justify-content: center; }
+.slide[data-layout="title"]::before { inset-block-start: 110px; inset-inline-end: 110px; inline-size: 420px; block-size: 680px; border-radius: 210px 210px 0 0; border: 3px solid var(--accent); opacity: 1; background: linear-gradient(180deg, rgb(240 180 41 / .22), transparent 70%); }
+.slide[data-layout="title"] h1 { font-size: 104px; max-inline-size: 11ch; }
+.slide[data-layout="title"] .meta { color: var(--muted); }
+.slide[data-layout="statement"] h2 { font-size: 82px; }
+.trio > div { border-color: var(--line); border-block-start-color: var(--accent); }
+.trio .num { color: var(--accent); }
+.trio small { background: #3b1d1d; color: #ff9d8a; }
+.bar .track { background: #1c2533; }
+.bar .fill { background: #51607a; }
+.bar.hot .fill { background: var(--accent); }
+.bar.hot { color: var(--accent); font-weight: 600; }
+.compare > div { border-color: var(--line); }
+.compare > div.to { background: var(--accent); color: #17130a; border-color: var(--accent); }
+.timeline li::before { background: var(--bg); }
+.source { color: #6b7688; }
+@media print { .slide, [dir="rtl"] .slide { background: var(--bg); } }
+</style>
+</head>
+<body>
+
+<main class="deck" id="deck">
+
+  <section class="slide" data-layout="title">
+    <p class="kicker"><span data-lang="ar">مقترح للجنة التنفيذية</span><span data-lang="en">Proposal to the executive committee</span></p>
+    <h1><span data-lang="ar">نافذة واحدة لكل مستفيد</span><span data-lang="en">One window for every customer</span></h1>
+    <div class="meta"><span data-lang="ar">إدارة تجربة المستفيد</span><span data-lang="en">Customer Experience Department</span><span data-lang="ar">نوفمبر 2026</span><span data-lang="en">November 2026</span></div>
+    <aside class="notes" data-lang="ar">ابدأ بالسؤال: كم مرة اضطر أحدكم إلى شرح مشكلته مرتين؟</aside>
+    <aside class="notes" data-lang="en">Open with a question: how often have you had to explain a problem twice?</aside>
+  </section>
+
+  <section class="slide" data-layout="statement">
+    <p class="kicker"><span data-lang="ar">الوضع اليوم</span><span data-lang="en">Where we are</span></p>
+    <h2><span data-lang="ar">يصلنا المستفيد عبر <mark>سبع قنوات</mark>، ولكل قناة فريق ونظام وإجابة مختلفة</span><span data-lang="en">Customers reach us through <mark>seven channels</mark>, each with its own team, system and answer</span></h2>
+  </section>
+
+  <section class="slide" data-layout="numbers">
+    <p class="kicker"><span data-lang="ar">ما الذي يكلّفنا ذلك؟</span><span data-lang="en">What it costs us</span></p>
+    <h2><span data-lang="ar">المستفيد يكرّر طلبه، وننتظر نحن أيامًا لإغلاقه</span><span data-lang="en">Customers repeat themselves and we take days to close a request</span></h2>
+    <div class="trio">
+      <div data-step><span class="num">41%</span><p data-lang="ar">من الطلبات تتكرّر في أكثر من قناة</p><p data-lang="en">of requests are repeated in another channel</p><small><span data-lang="ar">طلبان من كل خمسة</span><span data-lang="en">two in every five</span></small></div>
+      <div data-step><span class="num">3.4</span><p data-lang="ar">أيام في المتوسط لإغلاق الطلب</p><p data-lang="en">days on average to close a request</p><small><span data-lang="ar">المستهدف يوم واحد</span><span data-lang="en">target is one day</span></small></div>
+      <div data-step><span class="num">62%</span><p data-lang="ar">رضا المستفيدين عن الخدمة</p><p data-lang="en">customer satisfaction</p><small><span data-lang="ar"><bdi dir="ltr">−9</bdi> نقاط في عامين</span><span data-lang="en">down 9 points in two years</span></small></div>
+    </div>
+    <p class="source"><span data-lang="ar">المصدر: بيانات مراكز الخدمة، يناير إلى سبتمبر 2026</span><span data-lang="en">Source: service-centre data, January to September 2026</span></p>
+  </section>
+
+  <section class="slide" data-layout="chart">
+    <p class="kicker"><span data-lang="ar">أين يذهب الوقت؟</span><span data-lang="en">Where the time goes</span></p>
+    <h2><span data-lang="ar">أقل من ربع وقت الموظف يذهب إلى حلّ المشكلة</span><span data-lang="en">Less than a quarter of an agent's time goes to solving the problem</span></h2>
+    <div class="bars" role="img" data-ar-aria-label="توزيع وقت موظف الخدمة: إعادة إدخال البيانات 38، البحث عن حالة الطلب 27، حل المشكلة 22، أعمال أخرى 13" data-en-aria-label="How a service agent's time is spent: re-entering data 38, looking up status 27, solving the problem 22, other 13">
+      <div class="bar" style="--v: 38%"><span data-lang="ar">إعادة إدخال البيانات</span><span data-lang="en">Re-entering data</span><span class="track"><i class="fill"></i></span><span class="num">38%</span></div>
+      <div class="bar" style="--v: 27%"><span data-lang="ar">البحث عن حالة الطلب</span><span data-lang="en">Looking up request status</span><span class="track"><i class="fill"></i></span><span class="num">27%</span></div>
+      <div class="bar hot" style="--v: 22%"><span data-lang="ar">حلّ المشكلة فعلًا</span><span data-lang="en">Actually solving the problem</span><span class="track"><i class="fill"></i></span><span class="num">22%</span></div>
+      <div class="bar" style="--v: 13%"><span data-lang="ar">أعمال أخرى</span><span data-lang="en">Other work</span><span class="track"><i class="fill"></i></span><span class="num">13%</span></div>
+    </div>
+    <p class="source"><span data-lang="ar">المصدر: دراسة زمن وحركة على 60 موظفًا، أكتوبر 2026</span><span data-lang="en">Source: time-and-motion study of 60 agents, October 2026</span></p>
+  </section>
+
+  <section class="slide" data-layout="statement">
+    <p class="kicker"><span data-lang="ar">المقترح</span><span data-lang="en">The proposal</span></p>
+    <h2><span data-lang="ar">نافذة واحدة: <mark>سجلّ موحّد</mark> لكل مستفيد، أيًّا كانت القناة التي يختارها</span><span data-lang="en">One window: <mark>a single record</mark> for every customer, whichever channel they choose</span></h2>
+  </section>
+
+  <section class="slide" data-layout="split">
+    <div class="split">
+      <div>
+        <p class="kicker"><span data-lang="ar">كيف تعمل؟</span><span data-lang="en">How it works</span></p>
+        <h2><span data-lang="ar">ثلاثة تغييرات يلمسها المستفيد والموظف</span><span data-lang="en">Three changes that customers and agents will feel</span></h2>
+      </div>
+      <ul class="points">
+        <li data-step><h3><span data-lang="ar">سجلّ واحد</span><span data-lang="en">One record</span></h3><p data-lang="ar">كل تواصل سابق أمام الموظف من اللحظة الأولى.</p><p data-lang="en">Every past contact is in front of the agent from the first second.</p></li>
+        <li data-step><h3><span data-lang="ar">توجيه تلقائي</span><span data-lang="en">Automatic routing</span></h3><p data-lang="ar">يصل الطلب إلى من يستطيع حلّه، لا إلى من ردّ أولًا.</p><p data-lang="en">A request goes to whoever can solve it, not whoever answered first.</p></li>
+        <li data-step><h3><span data-lang="ar">متابعة شفافة</span><span data-lang="en">Transparent tracking</span></h3><p data-lang="ar">يرى المستفيد حالة طلبه دون أن يسأل.</p><p data-lang="en">Customers see the status of their request without asking.</p></li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="slide" data-layout="compare">
+    <p class="kicker"><span data-lang="ar">الأثر المتوقع</span><span data-lang="en">Expected impact</span></p>
+    <h2><span data-lang="ar">خلال 12 شهرًا: يوم واحد لإغلاق الطلب بدل ثلاثة</span><span data-lang="en">Within 12 months: one day to close a request instead of three</span></h2>
+    <div class="compare">
+      <div><h3><span data-lang="ar">اليوم</span><span data-lang="en">Today</span></h3><ul><li><span data-lang="ar">7 أنظمة غير مترابطة</span><span data-lang="en">7 disconnected systems</span></li><li><span data-lang="ar">3.4 أيام لإغلاق الطلب</span><span data-lang="en">3.4 days to close a request</span></li><li><span data-lang="ar">رضا المستفيدين 62%</span><span data-lang="en">Satisfaction at 62%</span></li></ul></div>
+      <svg class="arrow" viewBox="0 0 64 64" fill="none" aria-hidden="true"><path d="M10 32h44M38 16l16 16-16 16" stroke="currentColor" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      <div class="to"><h3><span data-lang="ar">بعد عام</span><span data-lang="en">In a year</span></h3><ul><li><span data-lang="ar">منصة واحدة</span><span data-lang="en">One platform</span></li><li><span data-lang="ar">يوم واحد لإغلاق الطلب</span><span data-lang="en">One day to close a request</span></li><li><span data-lang="ar">رضا المستفيدين 80%</span><span data-lang="en">Satisfaction at 80%</span></li></ul></div>
+    </div>
+  </section>
+
+  <section class="slide" data-layout="timeline">
+    <p class="kicker"><span data-lang="ar">خطة التنفيذ</span><span data-lang="en">Delivery plan</span></p>
+    <h2><span data-lang="ar">أربع مراحل، وأول أثر ملموس في أبريل</span><span data-lang="en">Four phases, with the first visible result in April</span></h2>
+    <ol class="timeline">
+      <li data-step><time datetime="2027-01"><span data-lang="ar">يناير</span><span data-lang="en">January</span></time><h3><span data-lang="ar">التأسيس</span><span data-lang="en">Foundation</span></h3><p data-lang="ar">السجلّ الموحّد وربط الأنظمة</p><p data-lang="en">Single record and system integration</p></li>
+      <li data-step><time datetime="2027-04"><span data-lang="ar">أبريل</span><span data-lang="en">April</span></time><h3><span data-lang="ar">أول قناتين</span><span data-lang="en">First two channels</span></h3><p data-lang="ar">الهاتف والتطبيق</p><p data-lang="en">Phone and app</p></li>
+      <li data-step><time datetime="2027-07"><span data-lang="ar">يوليو</span><span data-lang="en">July</span></time><h3><span data-lang="ar">كل القنوات</span><span data-lang="en">All channels</span></h3><p data-lang="ar">الفروع والبريد ووسائل التواصل</p><p data-lang="en">Branches, email and social media</p></li>
+      <li data-step><time datetime="2027-12"><span data-lang="ar">ديسمبر</span><span data-lang="en">December</span></time><h3><span data-lang="ar">قياس الأثر</span><span data-lang="en">Measure impact</span></h3><p data-lang="ar">تقرير للجنة بالنتائج</p><p data-lang="en">Results reported to the committee</p></li>
+    </ol>
+  </section>
+
+  <section class="slide" data-layout="ask">
+    <p class="kicker"><span data-lang="ar">المطلوب من اللجنة</span><span data-lang="en">What we ask of the committee</span></p>
+    <h2><span data-lang="ar">ثلاثة قرارات تبدأ بها النافذة الواحدة</span><span data-lang="en">Three decisions that start the single window</span></h2>
+    <ol class="asks">
+      <li data-step><span data-lang="ar">اعتماد مشروع النافذة الواحدة ضمن خطة 2027</span><span data-lang="en">Approve the single-window project in the 2027 plan</span></li>
+      <li data-step><span data-lang="ar">تكليف مالك واحد للمشروع من الإدارة التنفيذية</span><span data-lang="en">Name one executive owner for the project</span></li>
+      <li data-step><span data-lang="ar">إقرار «يوم واحد» مستهدفًا لإغلاق الطلب</span><span data-lang="en">Adopt "one day" as the target for closing a request</span></li>
+    </ol>
+  </section>
+
+</main>
+
+<div class="progress" aria-hidden="true"><i id="bar"></i></div>
+<div class="counter" aria-hidden="true"><bdi dir="ltr" id="counter">1 / 1</bdi></div>
+<div class="notes-panel" id="notes"></div>
+<div class="sr-only" aria-live="polite" id="live"></div>
+
+<script>
+(function () {
+  var root = document.documentElement, DIRS = { ar: "rtl", en: "ltr" };
+  var slides = Array.prototype.slice.call(document.querySelectorAll(".slide"));
+  var bar = document.getElementById("bar"), counter = document.getElementById("counter");
+  var live = document.getElementById("live"), notes = document.getElementById("notes");
+  var index = 0;
+
+  function setLang(lang) {
+    if (!DIRS[lang]) lang = "ar";
+    root.lang = lang; root.dir = DIRS[lang];
+    var prefix = "data-" + lang + "-";
+    document.querySelectorAll("*").forEach(function (el) {
+      Array.prototype.slice.call(el.attributes).forEach(function (a) {
+        if (a.name.indexOf(prefix) !== 0) return;
+        var name = a.name.slice(prefix.length);
+        if (name === "text") el.textContent = a.value; else el.setAttribute(name, a.value);
+      });
+    });
+    render();
+  }
+  function fit() { root.style.setProperty("--scale", Math.min(innerWidth / 1600, innerHeight / 900)); }
+  function steps(slide) { return Array.prototype.slice.call(slide.querySelectorAll("[data-step]")); }
+  function render() {
+    slides.forEach(function (s, i) {
+      s.classList.toggle("is-active", i === index);
+      s.classList.toggle("is-past", i < index);
+      s.setAttribute("aria-hidden", i === index ? "false" : "true");
+    });
+    bar.style.inlineSize = ((index + 1) / slides.length * 100) + "%";
+    counter.textContent = (index + 1) + " / " + slides.length;
+    var heading = slides[index].querySelector("h1, h2");
+    live.textContent = heading ? heading.innerText : "";
+    var note = slides[index].querySelector('.notes[data-lang="' + root.lang + '"]');
+    notes.textContent = note ? note.textContent : "";
+    if (location.hash !== "#" + (index + 1)) history.replaceState(null, "", "#" + (index + 1));
+  }
+  function go(i, revealAll) {
+    index = Math.max(0, Math.min(slides.length - 1, i));
+    steps(slides[index]).forEach(function (el) { el.classList.toggle("is-shown", !!revealAll); });
+    render();
+  }
+  function next() {
+    var hidden = steps(slides[index]).filter(function (el) { return !el.classList.contains("is-shown"); });
+    if (hidden.length) hidden[0].classList.add("is-shown"); else if (index < slides.length - 1) go(index + 1, false);
+  }
+  function prev() {
+    var shown = steps(slides[index]).filter(function (el) { return el.classList.contains("is-shown"); });
+    if (shown.length) shown[shown.length - 1].classList.remove("is-shown"); else if (index > 0) go(index - 1, true);
+  }
+
+  document.addEventListener("keydown", function (e) {
+    if (e.metaKey || e.ctrlKey || e.altKey) return;
+    var rtl = root.dir === "rtl", k = e.key;
+    if (k === "ArrowLeft") { rtl ? next() : prev(); }
+    else if (k === "ArrowRight") { rtl ? prev() : next(); }
+    else if (k === " " || k === "PageDown" || k === "ArrowDown" || k === "Enter") { next(); }
+    else if (k === "PageUp" || k === "ArrowUp" || k === "Backspace") { prev(); }
+    else if (k === "Home") { go(0, false); }
+    else if (k === "End") { go(slides.length - 1, true); }
+    else if (k === "l" || k === "L") { setLang(root.lang === "ar" ? "en" : "ar"); }
+    else if (k === "n" || k === "N") { document.body.classList.toggle("show-notes"); }
+    else if (k === "p" || k === "P") { window.print(); }
+    else if (k === "f" || k === "F") { document.fullscreenElement ? document.exitFullscreen() : root.requestFullscreen && root.requestFullscreen(); }
+    else { return; }
+    e.preventDefault();
+  });
+
+  var startX = null;
+  document.addEventListener("touchstart", function (e) { startX = e.touches[0].clientX; }, { passive: true });
+  document.addEventListener("touchend", function (e) {
+    if (startX === null) return;
+    var dx = e.changedTouches[0].clientX - startX; startX = null;
+    if (Math.abs(dx) < 50) return;
+    var forward = root.dir === "rtl" ? dx > 0 : dx < 0;   /* swipe towards the reading start to advance */
+    forward ? next() : prev();
+  }, { passive: true });
+  document.addEventListener("click", function (e) { if (!e.target.closest("a, button, input, .notes-panel")) next(); });
+
+  window.addEventListener("resize", fit);
+  window.addEventListener("hashchange", function () { var n = parseInt(location.hash.slice(1), 10); if (n && n - 1 !== index) go(n - 1, true); });
+  fit();
+  var wanted = new URLSearchParams(location.search).get("lang");
+  var first = (parseInt(location.hash.slice(1), 10) || 1) - 1;
+  setLang(wanted || root.lang);
+  go(first, first > 0);
+})();
+</script>
+</body>
+</html>
