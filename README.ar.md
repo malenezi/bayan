@@ -84,7 +84,7 @@ python shared/scripts/i18n_parity.py --json ar.json en.json
 
 «بيان» مستودع مستقل. ولصاحبه مستودعان شقيقان يستخدمانه:
 
-- [الأكاديمية السعودية لريادة الأعمال بالذكاء الاصطناعي الوكيلي](https://github.com/malenezi/saudi-agentic-ai-entrepreneurship-academy): منهج عربي أولاً لرواد الأعمال. [تمارين مختبرها](https://github.com/malenezi/saudi-agentic-ai-entrepreneurship-academy/tree/main/05-agentic-ai-lab/exercises) تستخدم هذه المهارات والمدققات لرسائل الوكيل وصفحة هبوط التجربة والعرض الاستثماري وتدقيق الاتجاه. انظر [صفحة المستودعات المرافقة](https://github.com/malenezi/saudi-agentic-ai-entrepreneurship-academy/blob/main/07-resources/companion-repositories.md).
+- [الأكاديمية السعودية لريادة الأعمال بالذكاء الاصطناعي الوكيلي](https://github.com/malenezi/saudi-agentic-ai-entrepreneurship-academy): منهج عربي أولاً لرواد الأعمال. [تمارين مختبرها](https://github.com/malenezi/saudi-agentic-ai-entrepreneurship-academy/tree/main/05-agentic-ai-lab/exercises) تستخدم هذه المهارات والمدققات لرسائل الوكيل وصفحة هبوط التجربة والعرض الاستثماري وتدقيق الاتجاه ولوحة قيادة ثنائية اللغة. انظر [صفحة المستودعات المرافقة](https://github.com/malenezi/saudi-agentic-ai-entrepreneurship-academy/blob/main/07-resources/companion-repositories.md).
 - [ريادة](https://github.com/malenezi/riyada): مهارات وملفات سياق وقوالب لمؤسس يبني ويشغّل منشأة بالوكلاء. «ريادة» تخطط التموضع والعرض، و«بيان» يبني الصفحة والعرض.
 
 ## المساهمة
