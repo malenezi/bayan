@@ -136,6 +136,13 @@ make check     # tests + spec validation + sync check + lint of every template a
 - Every template and example passes the linter and the parity checker in CI.
 - Rendering claims in the bidi reference were verified in Chromium, not taken from memory.
 
+## Related repositories
+
+Bayan stands on its own. Two sister repositories by the same author use it:
+
+- [Saudi Agentic AI Entrepreneurship Academy](https://github.com/malenezi/saudi-agentic-ai-entrepreneurship-academy): an Arabic-first curriculum for founders. Its [lab exercises](https://github.com/malenezi/saudi-agentic-ai-entrepreneurship-academy/tree/main/05-agentic-ai-lab/exercises) use these skills and linters for agent messages, a pilot landing page, a pitch deck and an RTL audit. See its [companion repositories page](https://github.com/malenezi/saudi-agentic-ai-entrepreneurship-academy/blob/main/07-resources/companion-repositories.md).
+- [Riyada](https://github.com/malenezi/riyada): skills, context files and templates for founders who build and run a company with AI agents. Riyada plans the positioning and the pitch; Bayan builds the page and the deck.
+
 ## Contributing
 
 Corrections from native speakers and RTL engineers are the most valuable contribution: a wrong term, a false positive, a missing rule. See [CONTRIBUTING.md](CONTRIBUTING.md). Hebrew, Persian and Urdu guidance is on the [roadmap](ROADMAP.md).
