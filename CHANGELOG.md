@@ -2,6 +2,13 @@
 
 ## Unreleased
 
+Nothing yet.
+
+## 1.0.1 (2026-11-19)
+
+Documentation release. No skill, linter or template changed; skill versions stay at 1.0.0.
+
+- Code of conduct and security policy.
 - README (English and Arabic): the related-repositories section now points to a working example of the deck engine and the deck lint profile: the fifteen course decks (264 slides) of the Saudi Agentic AI Entrepreneurship Academy.
 
 ## 1.0.0 (2026-11-15)
